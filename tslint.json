@@ -14,7 +14,7 @@
     "arrow-parens": false,
     "object-literal-sort-keys": false,
     "semicolon": [true, "always", "ignore-interfaces"],
-    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}]
+    "trailing-comma": [true, { "multiline": "always", "singleline": "never" }]
   },
   "rulesDirectory": []
 }
