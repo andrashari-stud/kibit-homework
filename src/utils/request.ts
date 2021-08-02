@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { RequestParameters } from '../models/request';
+import { IRequestParameters } from '../models/request';
 
 export const getApiResponse = async ({
   method = 'get',
@@ -7,7 +7,7 @@ export const getApiResponse = async ({
   headers = {},
   params = {},
   data = {},
-}: RequestParameters): Promise<AxiosResponse | null> => {
+}: IRequestParameters): Promise<AxiosResponse | null> => {
   // console.log(`----------------------`);
   // console.log( url, headers);
   const urlWithQueryParams = url + concatQueryParams(params);

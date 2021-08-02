@@ -7,7 +7,8 @@ import { FetchRelatedMoviesByIdDto } from './dto/fetch-related-movies-by-id.dto'
 import { FetchWikipediaPageByIdDto } from './dto/fetch-wikipedia-by-id.dto';
 import { MoviesService } from './movies.service';
 import { FetchWikipediaByIdResultEntity as wikipediaPageResult } from './entities/fetch-wikipedia-page-by-id-result.entity';
-import { FetchWikipediaPageByIdResult } from '../models/endpoints/wikipedia';
+import { IFetchWikipediaPageByIdResult } from '../models/endpoints/wikipedia';
+import { IErrorResponse } from 'src/models/endpoints/error';
 
 @Resolver(of => Movie)
 export class MoviesResolver {
@@ -24,7 +25,9 @@ export class MoviesResolver {
   }
 
   @Query(() => wikipediaPageResult)
-  fetchWikipediaPageById(@Args() queryArgs: FetchWikipediaPageByIdDto): Promise<FetchWikipediaPageByIdResult> {
+  fetchWikipediaPageById(
+    @Args() queryArgs: FetchWikipediaPageByIdDto,
+  ): Promise<IFetchWikipediaPageByIdResult | IErrorResponse> {
     return this.moviesService.fetchWikipediaPageById(queryArgs);
   }
 

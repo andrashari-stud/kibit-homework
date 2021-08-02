@@ -10,7 +10,8 @@ import { ServiceHelper } from '../common/helpers/service.helper';
 
 import apiUrls from '../constants/apiUrls';
 import { getApiResponse } from '../utils/request';
-import { FetchWikipediaPageByIdResult } from '../models/endpoints/wikipedia';
+import { IFetchWikipediaPageByIdResult } from '../models/endpoints/wikipedia';
+import { IErrorResponse } from '../models/endpoints/error';
 import { AxiosResponse } from 'axios';
 
 import { uniqBy } from 'lodash';
@@ -44,43 +45,62 @@ export class MoviesService {
    * @param id
    * @returns String
    */
-  async fetchWikipediaPageById(params: FetchWikipediaPageByIdDto): Promise<FetchWikipediaPageByIdResult> {
+  async fetchWikipediaPageById(
+    params: FetchWikipediaPageByIdDto,
+  ): Promise<IFetchWikipediaPageByIdResult | IErrorResponse> {
     const { wikiDataId } = params;
-    const res: AxiosResponse = await getApiResponse({
-      url: apiUrls.WIKIDATA,
-      params: {
-        action: 'wbgetentities',
-        props: 'sitelinks/urls',
-        ids: wikiDataId,
-        sitefilter: 'enwiki',
-        format: 'json',
-      },
-    });
-    const wikipediaPageUrl = res.data.entities[wikiDataId].sitelinks.enwiki.url;
-    const wikipediaTitle = res.data.entities[wikiDataId].sitelinks.enwiki.title;
+    let wikiDataResponse: AxiosResponse;
+    try {
+      wikiDataResponse = await getApiResponse({
+        url: apiUrls.WIKIDATA,
+        params: {
+          action: 'wbgetentities',
+          props: 'sitelinks/urls',
+          ids: wikiDataId,
+          sitefilter: 'enwiki',
+          format: 'json',
+        },
+      });
+    } catch (e) {
+      return { message: `There is something wrong with wikiDataResponse from wikidata url, message: ${e.message}` };
+    }
+    const wikipediaPageUrl: string = wikiDataResponse.data.entities[wikiDataId].sitelinks.enwiki.url;
+    const wikipediaTitle: string = wikiDataResponse.data.entities[wikiDataId].sitelinks.enwiki.title;
 
-    const contentResult: any = await getApiResponse({
-      url: apiUrls.WIKIPEDIA,
-      params: {
-        action: 'query',
-        prop: 'revisions',
-        titles: wikipediaTitle.replace(/ /g, '_'),
-        utf8: 1,
-        format: 'json',
-        rvprop: 'content',
-      },
-    });
-    const pages = contentResult.data.query.pages;
+    let contentResponse: AxiosResponse;
+    try {
+      contentResponse = await getApiResponse({
+        url: apiUrls.WIKIPEDIA,
+        params: {
+          action: 'query',
+          prop: 'revisions',
+          titles: wikipediaTitle.replace(/ /g, '_'),
+          utf8: 1,
+          format: 'json',
+          rvprop: 'content',
+        },
+      });
+    } catch (e) {
+      return { message: `There is something wrong with contentResponse from wikipedia url, message: ${e.message}` };
+    }
+
+    const pages = contentResponse.data.query.pages;
     const firstParagraph = pages[Object.keys(pages)[0]].revisions[0]['*'].split(`\n\n`)[1];
     // Query: SELECT IMDB_ID WHERE {wd:${wikiDataId} wdt:P345 ?IMDB_ID .}
-    const imdbIdResult: any = await getApiResponse({
-      url: apiUrls.SPARQL,
-      params: {
-        query: `SELECT ?IMDB_ID WHERE {wd:${wikiDataId} wdt:P345 ?IMDB_ID}`.replace(/ /g, '+'),
-        format: 'json',
-      },
-    });
-    const imdbPageUrl = `https://www.imdb.com/title/${imdbIdResult.data.results.bindings[0].IMDB_ID.value}`;
+    let imdbIdResponse: AxiosResponse;
+    try {
+      imdbIdResponse = await getApiResponse({
+        url: apiUrls.SPARQL,
+        params: {
+          query: `SELECT ?IMDB_ID WHERE {wd:${wikiDataId} wdt:P345 ?IMDB_ID}`.replace(/ /g, '+'),
+          format: 'json',
+        },
+      });
+    } catch (e) {
+      return { message: `There is something wrong with imdbIdResponse from SPARQL, message: ${e.message}` };
+    }
+
+    const imdbPageUrl = `https://www.imdb.com/title/${imdbIdResponse.data.results.bindings[0].IMDB_ID.value}`;
     return { wikipediaPageUrl, firstParagraph, imdbPageUrl };
   }
 

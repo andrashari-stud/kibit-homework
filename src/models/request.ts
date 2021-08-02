@@ -1,6 +1,6 @@
 import { Method } from 'axios';
 
-export interface RequestParameters {
+export interface IRequestParameters {
   method?: Method;
   url: string;
   headers?: {};
