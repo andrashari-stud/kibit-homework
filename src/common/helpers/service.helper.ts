@@ -1,49 +1,55 @@
 import { ObjectId } from 'mongodb';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { IWhereName } from '../interfaces/where-name.interface';
-import { IWhereIds } from '../interfaces/where-ids.interface';
+import { IWhereId } from '../interfaces/where-id.interface';
+import { IWhereProp } from '../interfaces/where-prop.interface';
 import { findOrder } from '../types/find-order.type';
-import { FindNameDto } from '../dto/find-name.dto';
+import { FindDto } from '../dto/find.dto';
+import { FindPropDto } from '../dto/find-prop.dto';
 
 @Injectable()
 export class ServiceHelper {
-  async getUpsertData(id: string | undefined, fields: any, repository: Repository<any>): Promise<any> {
-    if (id) {
-      return {
-        ...(await repository.findOne(id)),
-        ...fields,
-      };
-    }
-
-    return repository.create(fields);
-  }
-
-  getWhereByName(name: string | undefined): IWhereName {
-    const $where: IWhereName = {
-      active: true,
-    };
-
-    if (name) {
-      $where.name = new RegExp('.*' + name.toLocaleLowerCase() + '.*', 'i');
-    }
-
-    return $where;
-  }
-
-  getWhereByIds(ids: string[]): IWhereIds {
-    const $where: IWhereIds = {
+  getWhereByIds(ids: string[]): IWhereId {
+    const $where: IWhereId = {
       _id: { $in: ids.map((mongoId: string): string => ObjectId(mongoId)) },
-      active: true,
     };
 
     return $where;
   }
 
-  async findAllByNameOrIds(dto: FindNameDto, repository: Repository<any>): Promise<any> {
-    const { skip, take, ids, name, order, fieldSort }: FindNameDto = dto;
+  getWhereByProp(propName: string, propValue: string | undefined): IWhereProp {
+    const $where: IWhereProp = {};
+
+    if (!!propName && !!propValue) {
+      $where[propName] = new RegExp('.*' + propValue.toLocaleLowerCase() + '.*', 'i');
+    }
+
+    return $where;
+  }
+
+  async findAll(dto: FindDto, repository: Repository<any>): Promise<any> {
+    const { skip, take, order, fieldSort }: FindDto = dto;
     const $order: findOrder = { [fieldSort]: order };
-    const $where: IWhereName | IWhereIds = ids ? this.getWhereByIds(ids) : this.getWhereByName(name);
+
+    const [result, count]: [any[], any[]] = await Promise.all([
+      repository.find({
+        skip,
+        take,
+        order: $order,
+      }),
+      repository.find({}),
+    ]);
+
+    return {
+      items: result,
+      total: count.length,
+    };
+  }
+
+  async findAllByProp(dto: FindPropDto, repository: Repository<any>): Promise<any> {
+    const { skip, take, propName, propValue, order, fieldSort }: FindPropDto = dto;
+    const $order: findOrder = { [fieldSort]: order };
+    const $where: IWhereProp = this.getWhereByProp(propName, propValue);
 
     const [result, count]: [any[], any[]] = await Promise.all([
       repository.find({
