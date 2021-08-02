@@ -3,40 +3,33 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-input CreateUserInput {
-  name: String!
-  email: Email!
-  telephone: String
-  birthDate: Date
-}
-
 """Date custom scalar type"""
 scalar Date
 
-"""Email custom scalar type"""
-scalar Email
+type FetchWikipediaByIdResult {
+  wikipediaPageUrl: String!
+  firstParagraph: String!
+  imdbPageUrl: String!
+}
 
-type ListUsers {
-  items: [User!]!
+type ListMovies {
+  items: [Movie!]!
   total: Int!
 }
 
-type Mutation {
-  saveUser(id: ID, userInput: CreateUserInput!): User!
-  deleteLocation(id: ID!): Boolean!
+type Movie {
+  title: String!
+  year: String!
+  actors: [String!]!
+  genres: [String!]!
+  wikiDataId: String!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 type Query {
-  user(id: String!): User!
-  users(skip: Int = 0, take: Int = 50, ids: [ID!], name: String, order: String = "DESC", fieldSort: String = "updatedAt"): ListUsers!
-}
-
-type User {
-  id: ID!
-  name: String!
-  email: Email!
-  telephone: String
-  birthDate: Date
-  createdAt: Date!
-  updatedAt: Date!
+  movies(skip: Int = 0, take: Int = 50, order: String = "DESC", fieldSort: String = "updatedAt"): ListMovies!
+  moviesByProp(propName: String!, propValue: String!, skip: Int = 0, take: Int = 50, order: String = "DESC", fieldSort: String = "updatedAt"): ListMovies!
+  fetchWikipediaPageById(wikiDataId: String!): FetchWikipediaByIdResult!
+  fetchRelatedMovies(id: String!): ListMovies!
 }
