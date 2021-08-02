@@ -8,7 +8,7 @@ describe('AppModule (e2e)', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [], // AppModule
     }).compile();
 
     app = moduleFixture.createNestApplication();
