@@ -1,0 +1,70 @@
+[{
+  "_id": {
+    "$oid": "6101eb8fe4849e1e21ee7a54"
+  },
+  "title": "On Her Majesty's Secret Service",
+  "year": "1969",
+  "actors": [
+    "Telly Savalas",
+    "George Lazenby",
+    "Diana Rigg"
+  ],
+  "genres": [
+    "action",
+    "adventure",
+    "thriller"
+  ],
+  "createdAt": {
+    "$date": "2021-07-29T22:00:00Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-29T22:00:00Z"
+  },
+  "wikiDataId": "Q107894"
+},{
+  "_id": {
+    "$oid": "6101ec3de4849e1e21ee7a57"
+  },
+  "title": "The Dirty Dozen",
+  "year": 1967,
+  "actors": [
+    "Charles Bronson",
+    "Lee Marvin",
+    "Telly Savalas"
+  ],
+  "genres": [
+    "adventure",
+    "action",
+    "war"
+  ],
+  "createdAt": {
+    "$date": "2021-01-01T00:00:00Z"
+  },
+  "updatedAt": {
+    "$date": "2021-06-29T22:00:00Z"
+  },
+  "wikiDataId": "Q470735"
+},{
+  "_id": {
+    "$oid": "6101ec33e4849e1e21ee7a56"
+  },
+  "title": "Gladiator",
+  "year": 2000,
+  "actors": [
+    "Russel Crowe",
+    "Joaquin Phoenix",
+    "Oliver Reed"
+  ],
+  "genres": [
+    "action",
+    "adventure",
+    "drama"
+  ],
+  "createdAt": {
+    "$date": "2021-05-19T22:00:00Z"
+  },
+  "updatedAt": {
+    "$date": "2021-07-01T22:00:00Z"
+  },
+  "wikiDataId": "Q128518"
+}]
