@@ -1,20 +1,18 @@
 function TypeOrmConfig() {
-  const {
-    MONGO_USERNAME,
-    MONGO_PASSWORD,
-    MONGO_HOST,
-    MONGO_PORT,
-    MONGO_DATABASE_NAME,
-  } = process.env;
+  const { MONGO_CONNECTION_STRING } = process.env;
 
-  const migrationsDir = '/db/migrations';
+  //const migrationsDir = '/db/migrations';
 
   return {
     type: 'mongodb',
-    url: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DATABASE_NAME}`,
+    url: MONGO_CONNECTION_STRING,
     entities: [__dirname + '/**/*.entity.ts'],
-    migrations: [migrationsDir + '/*.js'],
-    cli: { migrationsDir },
+    ssl: true,
+    useUnifiedTopology: true,
+    keepConnectionAlive: true,
+    //useNewUrlParser: true,
+    //migrations: [migrationsDir + '/*.js'],
+    //cli: { migrationsDir },
     synchronize: true,
   };
 }
