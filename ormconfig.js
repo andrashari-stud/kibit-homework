@@ -4,16 +4,15 @@ function TypeOrmConfig() {
   //const migrationsDir = '/db/migrations';
 
   return {
-    type: 'mongodb',
-    url: MONGO_CONNECTION_STRING,
-    entities: [__dirname + '/**/*.entity.ts'],
+    entities: [__dirname + "/**/*.entity.ts"],
     ssl: true,
+    synchronize: true,
+    type: "mongodb",
+    url: MONGO_CONNECTION_STRING,
     useUnifiedTopology: true,
-    keepConnectionAlive: true,
     //useNewUrlParser: true,
     //migrations: [migrationsDir + '/*.js'],
     //cli: { migrationsDir },
-    synchronize: true,
   };
 }
 
